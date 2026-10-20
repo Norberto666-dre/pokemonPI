@@ -18,7 +18,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: null,
-      includeAssets: ["icon-192.png", "icon-512.png", "icon-maskable-512.png"],
+      includeAssets: ["icon-192.png", "icon-512.png", "icon-maskable-512.png", "favicon.ico"],
       manifest: {
         id: base,
         name: "PokéGuía · Guía Pokémon completa",

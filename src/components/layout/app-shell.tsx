@@ -5,7 +5,7 @@ import { Heart, Moon, Search, Sun } from "lucide-react";
 
 import { SearchDialog, useSearchShortcut } from "@/components/search/search-dialog";
 import { InstallButton } from "@/components/layout/install-button";
-import { Pokeball } from "@/components/shared/pokeball";
+import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -53,7 +53,7 @@ export function AppShell() {
               to="/"
               className="flex items-center gap-2.5 text-foreground transition-opacity hover:opacity-80"
             >
-              <Pokeball className="size-9 text-primary" />
+              <Logo className="h-9" />
               <span className="font-display text-xl font-semibold tracking-tight">
                 Poké<span className="text-primary">Guía</span>
               </span>
@@ -144,7 +144,7 @@ export function AppShell() {
         <footer className="mt-6 border-t border-border/70 bg-card/40">
           <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:px-6">
             <p className="flex items-center gap-2">
-              <Pokeball className="size-4 text-primary" />
+              <Logo className="h-5" />
               PokéGuía · hecha para entrenadores
             </p>
             <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
