@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.75rem;
+  --background: #faf6ef;
+  --foreground: #241a12;
+  --card: #fffdf8;
+  --card-foreground: #241a12;
+  --popover: #fffdf8;
+  --popover-foreground: #241a12;
+  --primary: #d96a35;
+  --primary-foreground: #fff8f2;
+  --secondary: #f2e8d9;
+  --secondary-foreground: #4a3828;
+  --muted: #f4ecdf;
+  --muted-foreground: #7c6a5a;
+  --accent: #f8e5cd;
+  --accent-foreground: #8a4a1d;
+  --destructive: #c94034;
+  --destructive-foreground: #fff8f2;
+  --border: #e9dcc6;
+  --input: #e9dcc6;
+  --ring: #d96a35;
+  --success: #4f9d69;
+  --warning: #e0a53d;
+
+  --type-normal: #a89b8c;
+  --type-fire: #e06b3a;
+  --type-water: #4a90c4;
+  --type-electric: #e8b03a;
+  --type-grass: #6fae5e;
+  --type-ice: #7cc4c8;
+  --type-fighting: #c45a4a;
+  --type-poison: #a06bc4;
+  --type-ground: #cfa05c;
+  --type-flying: #8fa8d8;
+  --type-psychic: #d8709f;
+  --type-bug: #8fae3f;
+  --type-rock: #b09a6e;
+  --type-ghost: #7a6bb0;
+  --type-dragon: #7a68c4;
+  --type-dark: #6b5a4e;
+  --type-steel: #8f9ba3;
+  --type-fairy: #dd8ab0;
+}
+
+.dark {
+  --background: #17110c;
+  --foreground: #f3e9dc;
+  --card: #1f1710;
+  --card-foreground: #f3e9dc;
+  --popover: #1f1710;
+  --popover-foreground: #f3e9dc;
+  --primary: #e8834e;
+  --primary-foreground: #1c130c;
+  --secondary: #2a1f16;
+  --secondary-foreground: #e5d5c2;
+  --muted: #261c14;
+  --muted-foreground: #b09a85;
+  --accent: #352417;
+  --accent-foreground: #f5c9a0;
+  --destructive: #e05a48;
+  --destructive-foreground: #fff8f2;
+  --border: #3a2b1d;
+  --input: #3a2b1d;
+  --ring: #e8834e;
+  --success: #63b37f;
+  --warning: #edb85a;
+}
+
+@theme inline {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", "Outfit", Georgia, serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --color-type-normal: var(--type-normal);
+  --color-type-fire: var(--type-fire);
+  --color-type-water: var(--type-water);
+  --color-type-electric: var(--type-electric);
+  --color-type-grass: var(--type-grass);
+  --color-type-ice: var(--type-ice);
+  --color-type-fighting: var(--type-fighting);
+  --color-type-poison: var(--type-poison);
+  --color-type-ground: var(--type-ground);
+  --color-type-flying: var(--type-flying);
+  --color-type-psychic: var(--type-psychic);
+  --color-type-bug: var(--type-bug);
+  --color-type-rock: var(--type-rock);
+  --color-type-ghost: var(--type-ghost);
+  --color-type-dragon: var(--type-dragon);
+  --color-type-dark: var(--type-dark);
+  --color-type-steel: var(--type-steel);
+  --color-type-fairy: var(--type-fairy);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 25%, transparent);
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--muted-foreground) 30%, transparent);
+    border-radius: 8px;
+    border: 3px solid var(--background);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--primary) 55%, transparent);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: "Fraunces", "Outfit", Georgia, serif;
+    font-optical-sizing: auto;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
