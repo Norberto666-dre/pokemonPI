@@ -7,7 +7,11 @@ import { VitePWA } from "vite-plugin-pwa";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const isGitHubPages = process.env.GITHUB_ACTIONS === "true";
+const base = isGitHubPages ? "/pokemonPI/" : "/";
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     tailwindcss(),
@@ -16,13 +20,14 @@ export default defineConfig({
       injectRegister: null,
       includeAssets: ["icon-192.png", "icon-512.png", "icon-maskable-512.png"],
       manifest: {
-        id: "/",
+        id: base,
         name: "PokéGuía · Guía Pokémon completa",
         short_name: "PokéGuía",
         description:
           "Guía Pokémon completa: Pokédex, tipos, evoluciones, movimientos, objetos y cartas.",
         lang: "es",
-        start_url: "/",
+        start_url: base,
+        scope: base,
         display: "standalone",
         orientation: "any",
         background_color: "#faf6ef",
@@ -30,19 +35,19 @@ export default defineConfig({
         categories: ["education", "entertainment"],
         icons: [
           {
-            src: "/icon-192.png",
+            src: `${base}icon-192.png`,
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icon-512.png",
+            src: `${base}icon-512.png`,
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "/icon-maskable-512.png",
+            src: `${base}icon-maskable-512.png`,
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
