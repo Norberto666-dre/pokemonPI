@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ExternalLink, Loader2, Sparkles } from "lucide-react";
 
 import { TypeBadge } from "@/components/shared/type-badge";
+import { TcgSetLogo } from "@/components/tcg/set-logo";
 import {
   Dialog,
   DialogContent,
@@ -10,12 +11,58 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { tcgCard, type TcgCardSummary } from "@/lib/api/tcgdex";
+import {
+  tcgCard,
+  tcgImageCandidates,
+  tcgImageUrl,
+  type TcgCardSummary,
+} from "@/lib/api/tcgdex";
 import { cn } from "@/lib/utils";
 
 export function cardImage(image: string | undefined, size: "low" | "high" = "low") {
-  if (!image) return null;
-  return `${image}/${size}.webp`;
+  return tcgImageUrl(image, size);
+}
+
+function CardArtwork({
+  image,
+  alt,
+  size,
+  className,
+  imgClassName,
+}: {
+  image?: string | null;
+  alt: string;
+  size: "low" | "high";
+  className?: string;
+  imgClassName?: string;
+}) {
+  const candidates = tcgImageCandidates(image, size);
+  const [attempt, setAttempt] = useState(0);
+  const src = candidates[attempt];
+
+  if (!src) {
+    return (
+      <div
+        className={cn(
+          "grid min-h-40 place-items-center bg-secondary text-muted-foreground",
+          className,
+        )}
+      >
+        <Sparkles className="size-6" aria-hidden="true" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      onError={() => setAttempt((current) => current + 1)}
+      className={cn(imgClassName, className)}
+    />
+  );
 }
 
 export function TcgCardTile({
@@ -27,9 +74,6 @@ export function TcgCardTile({
   onSelect?: (card: TcgCardSummary) => void;
   className?: string;
 }) {
-  const [failed, setFailed] = useState(false);
-  const src = cardImage(card.image, "low");
-
   return (
     <button
       type="button"
@@ -40,19 +84,13 @@ export function TcgCardTile({
       )}
     >
       <div className="relative aspect-[245/342] overflow-hidden rounded-xl bg-secondary">
-        {src && !failed ? (
-          <img
-            src={src}
-            alt={card.name}
-            loading="lazy"
-            onError={() => setFailed(true)}
-            className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="grid size-full place-items-center text-muted-foreground">
-            <Sparkles className="size-6" />
-          </div>
-        )}
+        <CardArtwork
+          image={card.image}
+          alt={card.name}
+          size="low"
+          className="size-full"
+          imgClassName="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+        />
       </div>
       <div className="space-y-1 px-1 pt-2 pb-1">
         <p className="truncate text-xs font-semibold">{card.name}</p>
@@ -73,22 +111,28 @@ export function TcgCardDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["tcg-card", card?.id],
     queryFn: () => tcgCard(card!.id),
     enabled: Boolean(open && card),
     staleTime: Infinity,
   });
 
-  const image = cardImage(data?.image ?? card?.image, "high");
+  const image = data?.image ?? card?.image;
+  const setName = data?.set?.name ?? card?.set?.name ?? "Carta Pokémon TCG";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">{card?.name}</DialogTitle>
-          <DialogDescription>
-            {data?.set?.name ?? card?.set?.name ?? "Carta Pokémon TCG"}
+          <DialogDescription className="flex items-center gap-2">
+            <TcgSetLogo
+              logo={data?.set?.logo ?? card?.set?.logo}
+              name={setName}
+              className="size-5 shrink-0"
+            />
+            <span>{setName}</span>
             {data?.rarity ? ` · ${data.rarity}` : card?.rarity ? ` · ${card.rarity}` : ""}
           </DialogDescription>
         </DialogHeader>
@@ -96,15 +140,25 @@ export function TcgCardDialog({
           <div className="flex items-center justify-center py-16 text-muted-foreground">
             <Loader2 className="size-5 animate-spin" />
           </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center gap-2 py-10 text-center">
+            <p className="text-sm text-muted-foreground">No pudimos cargar esta carta.</p>
+            <button
+              onClick={() => refetch()}
+              className="rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold transition-colors hover:border-primary hover:text-primary"
+            >
+              Reintentar
+            </button>
+          </div>
         ) : (
           <div className="grid gap-5 sm:grid-cols-[240px_1fr]">
-            {image && (
-              <img
-                src={image}
-                alt={card?.name ?? "Carta"}
-                className="mx-auto w-full max-w-60 rounded-xl shadow-lg"
-              />
-            )}
+            <CardArtwork
+              image={image}
+              alt={card?.name ?? "Carta"}
+              size="high"
+              className="mx-auto w-full max-w-60 rounded-xl shadow-lg"
+              imgClassName="mx-auto w-full max-w-60 rounded-xl shadow-lg"
+            />
             <div className="space-y-4 text-sm">
               <div className="flex flex-wrap items-center gap-2">
                 {data?.types?.map((type) => (

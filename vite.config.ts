@@ -87,11 +87,21 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https:\/\/(api\.tcgdex\.net|assets\.tcgdex\.net)\/.*/i,
-            handler: "StaleWhileRevalidate",
+            urlPattern: /^https:\/\/api\.tcgdex\.net\/.*/i,
+            handler: "NetworkFirst",
             options: {
-              cacheName: "tcgdex",
-              expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheName: "tcgdex-api",
+              expiration: { maxEntries: 900, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              networkTimeoutSeconds: 10,
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/assets\.tcgdex\.net\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "tcgdex-assets",
+              expiration: { maxEntries: 1200, maxAgeSeconds: 60 * 60 * 24 * 60 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
