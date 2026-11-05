@@ -1,6 +1,7 @@
 import path from "node:path";
+import { copyFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -9,6 +10,22 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isGitHubPages = process.env.GITHUB_ACTIONS === "true";
 const base = isGitHubPages ? "/pokemonPI/" : "/";
+
+/**
+ * GitHub Pages has no SPA fallback: a deep link such as /pokemonPI/cards
+ * would return a 404 page. Copying the built index.html to 404.html makes
+ * GitHub Pages serve the app shell, and React Router takes over.
+ */
+function spaFallback404(): Plugin {
+  return {
+    name: "spa-fallback-404",
+    apply: "build",
+    closeBundle() {
+      const dist = path.resolve(dirname, "dist");
+      copyFileSync(path.join(dist, "index.html"), path.join(dist, "404.html"));
+    },
+  };
+}
 
 export default defineConfig({
   base,
@@ -108,6 +125,7 @@ export default defineConfig({
         ],
       },
     }),
+    spaFallback404(),
   ],
   resolve: {
     alias: {
