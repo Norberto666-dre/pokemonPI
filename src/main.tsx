@@ -22,9 +22,26 @@ const updateSW = registerSW({
   },
   onRegisteredSW(_url, registration) {
     if (!registration) return;
-    setInterval(() => void registration.update(), 60 * 60 * 1000);
+    const checkForUpdate = () => void registration.update();
+    setInterval(checkForUpdate, 15 * 60 * 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") checkForUpdate();
+    });
+    window.addEventListener("focus", checkForUpdate);
   },
 });
+
+/**
+ * When a new service worker takes control and the page was already controlled
+ * by an older one, reload once so the user never gets stuck on cached assets.
+ */
+if ("serviceWorker" in navigator) {
+  const hadController = Boolean(navigator.serviceWorker.controller);
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController) return;
+    window.location.reload();
+  });
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
